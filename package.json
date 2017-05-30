@@ -1,6 +1,6 @@
 {
   "name": "ember-procrastination",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "No code is more concurrent than code that does not run.",
   "keywords": [
     "ember-addon"
