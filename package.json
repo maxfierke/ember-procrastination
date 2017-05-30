@@ -1,7 +1,7 @@
 {
   "name": "ember-procrastination",
-  "version": "0.0.0",
-  "description": "The default blueprint for ember-cli addons.",
+  "version": "0.1.0",
+  "description": "No code is more concurrent than code that does not run.",
   "keywords": [
     "ember-addon"
   ],
