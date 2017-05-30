@@ -48,7 +48,10 @@ export const Someday = ObjetdEmber.extend({
     } else if (performCount % 7 === 0) {
       setExcuse(this, 'Jeez! Alright!');
       return this.get('_task').perform(...args)
-        .then(() => teardownListener(this));
+        .then(() => {
+          teardownListener(this);
+          setExcuse(this, undefined);
+        });
     } else if (performCount % 9 === 0) {
       excuse = 'Just for that... no task for you.';
       setExcuse(this, excuse);
@@ -94,12 +97,14 @@ function teardownListener(context) {
 }
 
 function setTask(context) {
-  const { fn, fnBinding } = context.getProperties('fn', 'fnBinding');
-  context.set('_task', makeTask(fn, fnBinding));
+  const { fn, fnContext } = context.getProperties('fn', 'fnContext');
+  context.set('_task', makeTask(fn, fnContext));
 }
 
 function setExcuse(context, excuse) {
-  Logger.debug(excuse);
+  if (excuse) {
+    Logger.debug(excuse);
+  }
   context.set('lastExcuse', excuse);
 }
 
@@ -107,8 +112,9 @@ function makeTask(genFn, binding) {
   return task(genFn.bind(binding)).enqueue();
 }
 
-export default function (fn) {
+export function SomedayProperty(fn) {
   return computed(function () {
-    return Someday.create({ fn, fnBinding: this });
+    const fnContext = this;
+    return Someday.create({ fn, fnContext });
   });
 }

@@ -16,5 +16,5 @@ import { SomedayProperty } from './-someday-property';
  * @returns {SomedayProperty}
  */
 export function someday(...args) {
-  return new SomedayProperty(...args);
+  return SomedayProperty(...args);
 }

@@ -1,7 +1,8 @@
-import { taskHelperClosure } from 'ember-concurrency/-helpers';
+import Ember from 'ember';
+import { taskHelperClosure } from 'ember-procrastination/-helpers';
 
-export function performHelper(args, hash) {
+export function procrastinateHelper(args, hash) {
   return taskHelperClosure('perform', args, hash);
 }
 
-export default performHelper;
+export default Ember.Helper.helper(procrastinateHelper);

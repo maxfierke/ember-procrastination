@@ -1,5 +1,22 @@
-{{!-- The following component displays Ember's default welcome message. --}}
-{{welcome-page}}
-{{!-- Feel free to remove this! --}}
-
-{{outlet}}
+<span>
+  Number is: {{num}}
+</span>
+<pre>
+  state = {{regenerateNumber.state}}
+  lastExcuse = {{regenerateNumber.lastExcuse}}
+</pre>
+<br />
+<button
+  type="button"
+  disabled={{regenerateNumber.isRunning}}
+  onClick={{procrastinate regenerateNumber}}>
+  {{#if (and regenerateNumber.isProcrastinating regenerateNumber.lastExcuse)}}
+    {{regenerateNumber.lastExcuse}}
+  {{else if regenerateNumber.isRunning}}
+    Doing the thing...
+  {{else if regenerateNumber.isQueued}}
+    Ugh... Why do you keep asking me to do stuff?
+  {{else}}
+    Do the Thing
+  {{/if}}
+</button>
