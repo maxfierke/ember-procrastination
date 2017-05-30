@@ -10,49 +10,56 @@ const {
 } = Ember;
 
 export const Someday = ObjetdEmber.extend({
-  isProcrastinating: computed('isRunning', 'isQueued', 'attemptedPerformCounter',
+  isProcrastinating: computed('isRunning', 'isQueued', 'performCount',
     function () {
       const { isRunning, isQueued } = this.getProperties('isRunning', 'isQueued');
-      const attemptedPerformCounter = this.get('attemptedPerformCounter');
-      return !isRunning && !isQueued && attemptedPerformCounter > 0;
+      const performCount = this.get('performCount');
+      return !isRunning && !isQueued && performCount > 0;
     }),
   isRunning: computed.alias('_task.isRunning'),
   isQueued: computed.alias('_task.isQueued'),
   isIdle: computed.alias('_task.isIdle'),
   last: computed.alias('_task.last'),
+  state: computed('_task.state', function () {
+    if (this.get('isProcrastinating')) {
+      return 'procrastinating';
+    } else {
+      return this.get('_task.state');
+    }
+  }),
 
   init() {
     this._super(...arguments);
 
-    this.set('attemptedPerformCounter', 0);
+    this.set('performCount', 0);
     setTask(this);
   },
 
   perform(...args) {
     setupListener(this);
 
-    this.incrementProperty('attemptedPerformCounter');
+    this.incrementProperty('performCount');
+    const performCount = this.get('performCount');
 
-    let msg;
+    let excuse;
 
-    if (this.attemptedPerformCounter % 3 === 0) {
-      msg = "Don't worry, I'll get to it.";
-      Logger.info(msg);
-      return Promise.resolve(msg);
-    } else if (this.attemptedPerformCounter % 7 === 0) {
-      Logger.info('Jeez! Alright!');
+    if (performCount % 3 === 0) {
+      excuse = "Don't worry, I'll get to it.";
+    } else if (performCount % 7 === 0) {
+      setExcuse(this, 'Jeez! Alright!');
       return this.get('_task').perform(...args)
         .then(() => teardownListener(this));
-    } else if (this.attemptedPerformCounter % 9 === 0) {
-      msg = 'Just for that... no task for you.';
-      Logger.info(msg);
+    } else if (performCount % 9 === 0) {
+      excuse = 'Just for that... no task for you.';
+      setExcuse(this, excuse);
       this.get('_task').cancelAll();
-      return Promise.reject(msg)
+      return Promise.reject(excuse);
     } else {
-      msg = "Yup, I heard you the first time.";
-      Logger.info(msg);
-      return Promise.resolve(msg);
+      excuse = "Yup, I heard you the first time.";
     }
+
+    setExcuse(this, excuse);
+    return Promise.resolve(excuse);
   }
 });
 
@@ -62,7 +69,8 @@ function setupListener(context, args) {
   }
 
   const listener = () => {
-    Logger.info('Oh shiiit. Sorry, sorry, sorry. Doing it!');
+    const excuse = 'Oh shiiit. Sorry, sorry, sorry. Doing it!';
+    setExcuse(context, excuse);
     context.get('_task').perform(...args);
   };
 
@@ -88,6 +96,11 @@ function teardownListener(context) {
 function setTask(context) {
   const { fn, fnBinding } = context.getProperties('fn', 'fnBinding');
   context.set('_task', makeTask(fn, fnBinding));
+}
+
+function setExcuse(context, excuse) {
+  Logger.debug(excuse);
+  context.set('lastExcuse', excuse);
 }
 
 function makeTask(genFn, binding) {
