@@ -8,14 +8,15 @@
   "license": "MIT",
   "author": "",
   "directories": {
-    "doc": "doc",
+    "doc": "docs",
     "test": "tests"
   },
   "repository": "",
   "scripts": {
     "build": "ember build",
     "start": "ember server",
-    "test": "ember try:each"
+    "test": "ember try:each",
+    "docs": "jsdoc addon/* -R API.md -c .jsdoc -d docs"
   },
   "dependencies": {
     "ember-cli-babel": "^6.0.0"
