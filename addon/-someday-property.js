@@ -36,7 +36,7 @@ export const Someday = ObjetdEmber.extend({
   },
 
   perform(...args) {
-    setupListener(this);
+    setupListener(this, ...args);
 
     this.incrementProperty('performCount');
     const performCount = this.get('performCount');
@@ -66,15 +66,17 @@ export const Someday = ObjetdEmber.extend({
   }
 });
 
-function setupListener(context, args) {
+function setupListener(context, ...args) {
   if (!window || context.get('_didSetListener')) {
     return;
   }
 
-  const listener = () => {
+  const listener = (e) => {
     const excuse = 'Oh shiiit. Sorry, sorry, sorry. Doing it!';
     setExcuse(context, excuse);
-    context.get('_task').perform(...args);
+    e.returnValue = excuse;
+    context.get('_task').perform(...args).then(() => setExcuse(context, undefined));
+    return excuse;
   };
 
   context.set('_didSetListener', true);
