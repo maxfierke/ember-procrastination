@@ -30,7 +30,7 @@ $ ember install ember-procrastination
 ## Example
 
 controller.js:
-```
+```js
 import Ember from 'ember';
 import { someday } from 'ember-procrastination';
 import { timeout } from 'ember-concurrency';
@@ -44,7 +44,7 @@ export default Ember.Controller.extend({
 ```
 
 template.hbs
-```
+```hbs
 <span>
   Number is: {{num}}
 </span>
